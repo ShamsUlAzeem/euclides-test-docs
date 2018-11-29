@@ -1,4 +1,4 @@
-This walkthrough will guide your through the :ref:`installation` and :ref:`configuration` process for setting up *EuclidesDB*.
+This walkthrough will guide you through the :ref:`installation` and :ref:`configuration` process for setting up *EuclidesDB*.
 
 .. _installation:
 
