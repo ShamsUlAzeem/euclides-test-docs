@@ -3,7 +3,7 @@ Welcome
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Table of Contents
 
    walkthrough
    e-commerce
