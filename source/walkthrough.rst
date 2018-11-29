@@ -80,10 +80,10 @@ For windows, *EuclidesDB* can only be used through a docker container. Please re
 =============
 Configuration
 =============
-EuclidesDB configurations can be contains in any file. Usually it is named `euclides.conf`. There are two types of configurations for *EuclidesDB*:
+The main EuclidesDB configurations (for server) can be contains in any file. Usually it is named `euclides.conf` while the model configurations have to be named `model.conf`. The two types of configurations for *EuclidesDB* are explained below:
 
 1. Server configurations
-2. Models configurations
+2. Model configurations
 
 1. Server Configurations
 ------------------------
@@ -231,7 +231,7 @@ D. Database Partition
 
 .. _model-config:
 
-2. Models Configurations
+2. Model Configurations
 ------------------------
 The models are structured in a folder hierarchy where each sub-folder of the models directory contains a PyTorch `traced module <https://pytorch.org/docs/master/jit.html>`_ file together with the ``model.conf`` (model configuration) file. The directory structure looks like the following:
 
@@ -256,3 +256,5 @@ As you can see, this file contains settings related to the model itself. Each of
  - ``model.prediction_dim``: this is prediction dimension of your model (number of output classes). Since EuclidesDB stores the final prediction layer as well as model features, you should provide the dimension of the prediction classes. For example, in a model trained on ImageNet, this will be 1000, meaning that there are 1000 prediction classes;
  - ``model.feature_dim``: this is feature dimension of your model, depending on your model this will have a different size. For the VGG-16 module for instance, this will be 4096, meaning that there is a 4096-dimension vector for the features. As you can note, this should be a flattened vector no matter what model you use. This can also be thought as the size of the input vector when flattened.
 
+Adding a New Model
+------------------
