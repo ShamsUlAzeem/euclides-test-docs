@@ -258,3 +258,81 @@ As you can see, this file contains settings related to the model itself. Each of
 
 Adding a New Model
 ------------------
+Adding a new model into EuclidesDB is straightforward, all you need is to follow the requirements below:
+
+ - **Normalization assumption**: we follow a normalization assumption similar to PyTorch `torchvision models <https://pytorch.org/docs/stable/torchvision/models.html>`_. EuclidesDB will forward images into your model's ``forward()`` method by scaling each pixel to be in between 0 and 1. Then you can normalize the data as you wish on your traced module as we'll show in a bit.
+ - **Return Tensors**: EuclidesDB stores two vectors from each item (or image), the first is the predictions (class predictions) and the second is the features that you want to store and use to index images to query later. For that reason, within your ``forward()`` method, you should always return a tuple with **(predictions, features)** and **respecting** the ordering of the elements.
+
+Here is a simple example from EuclidesDB, where it uses the ResNet-18 model from `torchvision` to build a traced module that can be loaded later by EuclidesDB:
+
+.. code-block:: python
+
+    from torchvision.models import resnet
+    import torch.utils.model_zoo as model_zoo
+
+    import torchvision
+    import torch
+
+    import torch.nn.functional as F
+
+    class ResnetModel(resnet.ResNet):
+        def forward(self, x):
+            x = self.conv1(x)
+            x = self.bn1(x)
+            x = self.relu(x)
+            x = self.maxpool(x)
+
+            x = self.layer1(x)
+            x = self.layer2(x)
+            x = self.layer3(x)
+            x = self.layer4(x)
+
+            x = self.avgpool(x)
+            x_feat = x.view(x.size(0), -1)
+            x = self.fc(x_feat)
+            predictions = F.softmax(x, dim=0)
+
+            return predictions, x_feat
+
+    def resnet18(pretrained=False, **kwargs):
+        model = ResnetModel(resnet.BasicBlock, [2, 2, 2, 2], **kwargs)
+        if pretrained:
+            model.load_state_dict(model_zoo.load_url(resnet.model_urls['resnet18']))
+        return model
+
+    class Resnet18Module(torch.jit.ScriptModule):
+        def __init__(self):
+            super(Resnet18Module, self).__init__()
+            self.means = torch.nn.Parameter(torch.tensor([0.485, 0.456, 0.406])
+                                            .resize_(1, 3, 1, 1))
+            self.stds = torch.nn.Parameter(torch.tensor([0.229, 0.224, 0.225])
+                                            .resize_(1, 3, 1, 1))
+            resnet_model = resnet18(pretrained=True)
+            resnet_model.eval()
+            self.resnet = torch.jit.trace(resnet_model,
+                                          torch.rand(1, 3, 224, 224))
+
+        @torch.jit.script_method
+        def helper(self, input):
+            return self.resnet((input - self.means) / self.stds)
+
+        @torch.jit.script_method
+        def forward(self, input):
+            return self.helper(input)
+
+    model = Resnet18Module()
+    model.eval()
+    traced_net = torch.jit.trace(model,
+                                 torch.rand(1, 3, 224, 224))
+    traced_net.save("resnet18.pth")
+
+As you can see, this script is doing some stitching to keep the pre-trained weights from the torchvision model, however all you need is a PyTorch module that returns the predictions and features from the ``forward()`` method and you just need to call the ``torch.jit.trace()`` to trace your model and produce the traced module file, which in our case is the ``resnet18.pth``.
+
+.. note:: Remember to call the ``eval()`` method before tracing it, otherwise you might get inconsistent results due to layers that have different behavior during training and prediction time like `Dropout` and `BatchNormalization`.
+
+After that, you just need to add this model into a sub-folder inside the models folder and add the configuration file for the model specifying the name of the model and other settings as show at the start of this section.
+
+What's Next?
+------------
+
+Now that you've been familiarized with how EuclidesDB can be configured, let's look at this `E-commerce application example <e-commerce.html>`_ as a fun exercise and a practical example.
