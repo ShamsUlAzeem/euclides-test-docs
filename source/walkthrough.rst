@@ -5,6 +5,7 @@ This walkthrough will guide you through the :ref:`installation` and :ref:`config
 ============
 Installation
 ============
+EuclidesDB can be installed locally on Linux and MacOS operating systems. For windows, you can use the EuclidesDB docker container as described in :ref:`all-os`.
 
 Pre-requisites
 --------------
@@ -257,7 +258,7 @@ As you can see, this file contains settings related to the model itself. Each of
  - ``model.feature_dim``: this is feature dimension of your model, depending on your model this will have a different size. For the VGG-16 module for instance, this will be 4096, meaning that there is a 4096-dimension vector for the features. As you can note, this should be a flattened vector no matter what model you use. This can also be thought as the size of the input vector when flattened.
 
 Adding a New Model
-------------------
+~~~~~~~~~~~~~~~~~~
 Adding a new model into EuclidesDB is straightforward, all you need is to follow the requirements below:
 
  - **Normalization assumption**: we follow a normalization assumption similar to PyTorch `torchvision models <https://pytorch.org/docs/stable/torchvision/models.html>`_. EuclidesDB will forward images into your model's ``forward()`` method by scaling each pixel to be in between 0 and 1. Then you can normalize the data as you wish on your traced module as we'll show in a bit.
