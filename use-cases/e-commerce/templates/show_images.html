@@ -1,0 +1,22 @@
+<head>
+    <style>
+
+    </style>
+</head>
+<body>
+    <b>Sample image</b>
+    <br>
+    <img src="{{ url }}" alt="Image" style="width:200px;height:200px;">
+    <br>
+    <br>
+    <i>Classifier output</i>: <b>[{{ output }}]</b>
+    <br>
+    <br>
+    <u><b>Recommendations for you</b></u>
+    <br>
+    <br>
+
+    {% for image in images %}
+        <img src="{{ image }}" alt="Image" style="width:200px;height:200px;">
+    {% endfor %}
+</body>

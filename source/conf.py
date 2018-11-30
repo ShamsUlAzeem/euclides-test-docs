@@ -19,7 +19,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'EuclidesDB Documentation'
+project = 'EuclidesDB'
 copyright = '2018, Shams Ul Azeem'
 author = 'Shams Ul Azeem'
 
@@ -175,3 +175,5 @@ epub_exclude_files = ['search.html']
 
 
 # -- Extension configuration -------------------------------------------------
+
+html_show_sourcelink = False
