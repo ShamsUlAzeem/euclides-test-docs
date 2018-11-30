@@ -39,5 +39,7 @@ The *EuclidesDB* server would be running on port `8000` on localhost, serving **
 Replace `<your_image_url>` with an image URL you wanna get recommendations for. For example, `http://localhost:5000/recommend?url=https://farm5.staticflickr.com/4908/44265208170_24c0da35d1_q_d.jpg`. The app will load the image, run it through the classifier and get recommendations for you via the flickr API.
 
 ## SAMPLE
+A working application would produce results like the following:
+
 ![Sample](sample.jpg?raw=true "Sample image")
 
